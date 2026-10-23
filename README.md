@@ -71,14 +71,6 @@ UP01_Rusakov_RealEstate/
 
 ![Схема данных](db/diagram.png)
 
-## Запуск
-
-1. Выполнить `db/schema.sql` в SQL Server Management Studio.
-2. При необходимости изменить имя сервера в `App.config` (сейчас `localhost\SQLEXPRESS01`).
-3. Открыть `UP01_Rusakov_RealEstate.sln` в Visual Studio и запустить проект.
-
-Для экспорта нужен установленный Microsoft Office. Файлы сохраняются в папку «Документы».
-
 ## Тестовые учётные записи
 
 | Логин | Пароль | Роль |
