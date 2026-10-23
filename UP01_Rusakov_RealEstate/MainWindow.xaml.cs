@@ -53,12 +53,10 @@ namespace UP01_Rusakov_RealEstate
                 Title = "AuroraApartments — " + page.Title;
             }
 
-            bool canGoBack;
-            if (admin != null)
-                canGoBack = admin.ContentFrame.CanGoBack;
+            if (admin != null && admin.ContentFrame.CanGoBack)
+                ButtonBack.Visibility = Visibility.Visible;
             else
-                canGoBack = MainFrame.CanGoBack;
-            ButtonBack.Visibility = canGoBack ? Visibility.Visible : Visibility.Hidden;
+                ButtonBack.Visibility = Visibility.Hidden;
 
             if (Helper.CurrentUser != null && admin == null)
                 ButtonLogout.Visibility = Visibility.Visible;
@@ -76,8 +74,6 @@ namespace UP01_Rusakov_RealEstate
             AdminPage admin = MainFrame.Content as AdminPage;
             if (admin != null && admin.ContentFrame.CanGoBack)
                 admin.ContentFrame.GoBack();
-            else if (MainFrame.CanGoBack)
-                MainFrame.GoBack();
         }
 
         private void ButtonLogout_Click(object sender, RoutedEventArgs e)

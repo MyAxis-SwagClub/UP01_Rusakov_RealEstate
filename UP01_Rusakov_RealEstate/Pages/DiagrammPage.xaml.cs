@@ -14,13 +14,9 @@ namespace UP01_Rusakov_RealEstate.Pages
 {
     public partial class DiagrammPage : Page
     {
-        private string[] chartNames = { "Гистограмма (столбцы)", "Линейчатая (полосы)", "Круговая", "Кольцевая",
-                                        "График", "Сглаженный график", "С областями", "Сглаженные области",
-                                        "Точечная", "Воронка", "Пирамида", "Лепестковая" };
+        private string[] chartNames = { "Гистограмма (столбцы)", "Линейчатая (полосы)", "Круговая", "Кольцевая", "График" };
         private SeriesChartType[] chartTypes = { SeriesChartType.Column, SeriesChartType.Bar, SeriesChartType.Pie,
-                                                 SeriesChartType.Doughnut, SeriesChartType.Line, SeriesChartType.Spline,
-                                                 SeriesChartType.Area, SeriesChartType.SplineArea, SeriesChartType.Point,
-                                                 SeriesChartType.Funnel, SeriesChartType.Pyramid, SeriesChartType.Radar };
+                                                 SeriesChartType.Doughnut, SeriesChartType.Line };
 
         public DiagrammPage()
         {
@@ -112,11 +108,18 @@ namespace UP01_Rusakov_RealEstate.Pages
             ChartProperties.Series[0].LabelForeColor = fore;
         }
 
-        private List<User> GetUsersForExport()
+        private List<Property> GetPropertiesForExport()
         {
-            if (CmbExportScope.SelectedIndex == 1)
-                return new List<User> { CmbUser.SelectedItem as User };
-            return GetSortedUsers();
+            User selectedUser = CmbUser.SelectedItem as User;
+            List<Property> properties = new List<Property>();
+            foreach (Property p in Entities.GetContext().Properties)
+            {
+                if (CmbExportScope.SelectedIndex == 1 && p.UserID != selectedUser.ID)
+                    continue;
+                properties.Add(p);
+            }
+            properties.Sort((a, b) => a.User.FIO.CompareTo(b.User.FIO));
+            return properties;
         }
 
         private string GetFileName(string extension)
@@ -125,7 +128,7 @@ namespace UP01_Rusakov_RealEstate.Pages
             if (CmbExportScope.SelectedIndex == 1)
                 name = (CmbUser.SelectedItem as User).Login;
             return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                                "Отчёт_" + name + extension);
+                                "Объекты_" + name + extension);
         }
 
         private void ButtonWord_Click(object sender, RoutedEventArgs e)
@@ -140,101 +143,57 @@ namespace UP01_Rusakov_RealEstate.Pages
 
         private void ExportToWord(bool toPdf)
         {
-            List<User> allUsers = GetUsersForExport();
-            List<PropertyType> allTypes = GetSortedTypes();
+            List<Property> properties = GetPropertiesForExport();
+            decimal totalPrice = 0;
+            foreach (Property p in properties)
+                totalPrice += p.Price;
 
             try
             {
                 var application = new Word.Application();
                 Word.Document document = application.Documents.Add();
 
-                foreach (User user in allUsers)
+                Word.Paragraph titleParagraph = document.Paragraphs.Add();
+                titleParagraph.Range.Text = "Список объектов недвижимости";
+                titleParagraph.Range.Font.Size = 16;
+                titleParagraph.Range.Font.Bold = 1;
+                titleParagraph.Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                titleParagraph.Range.InsertParagraphAfter();
+
+                Word.Paragraph dateParagraph = document.Paragraphs.Add();
+                dateParagraph.Range.Text = "Дата: " + DateTime.Now.ToString("dd.MM.yyyy");
+                dateParagraph.Range.Font.Size = 12;
+                dateParagraph.Range.Font.Bold = 0;
+                dateParagraph.Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphLeft;
+                dateParagraph.Range.InsertParagraphAfter();
+
+                Word.Paragraph tableParagraph = document.Paragraphs.Add();
+                Word.Table table = document.Tables.Add(tableParagraph.Range, properties.Count + 1, 5);
+                table.Borders.InsideLineStyle = Word.WdLineStyle.wdLineStyleSingle;
+                table.Borders.OutsideLineStyle = Word.WdLineStyle.wdLineStyleSingle;
+
+                table.Cell(1, 1).Range.Text = "Агент";
+                table.Cell(1, 2).Range.Text = "Тип";
+                table.Cell(1, 3).Range.Text = "Адрес";
+                table.Cell(1, 4).Range.Text = "Площадь, м²";
+                table.Cell(1, 5).Range.Text = "Цена, руб.";
+                table.Rows[1].Range.Font.Bold = 1;
+
+                for (int i = 0; i < properties.Count; i++)
                 {
-                    List<Property> userProperties = new List<Property>(user.Properties);
-
-                    decimal totalSum = 0;
-                    Property maxProperty = null;
-                    Property minProperty = null;
-                    foreach (Property p in userProperties)
-                    {
-                        totalSum += p.Price;
-                        if (maxProperty == null || p.Price > maxProperty.Price)
-                            maxProperty = p;
-                        if (minProperty == null || p.Price < minProperty.Price)
-                            minProperty = p;
-                    }
-
-                    Word.Paragraph userParagraph = document.Paragraphs.Add();
-                    Word.Range userRange = userParagraph.Range;
-                    userRange.Text = user.FIO;
-                    userParagraph.set_Style(Word.WdBuiltinStyle.wdStyleHeading1);
-                    userRange.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
-                    userRange.InsertParagraphAfter();
-
-                    Word.Paragraph tableParagraph = document.Paragraphs.Add();
-                    Word.Range tableRange = tableParagraph.Range;
-                    Word.Table paymentsTable = document.Tables.Add(tableRange, allTypes.Count + 2, 3);
-                    paymentsTable.Borders.InsideLineStyle = paymentsTable.Borders.OutsideLineStyle =
-                        Word.WdLineStyle.wdLineStyleSingle;
-
-                    paymentsTable.Cell(1, 1).Range.Text = "Тип недвижимости";
-                    paymentsTable.Cell(1, 2).Range.Text = "Количество объектов";
-                    paymentsTable.Cell(1, 3).Range.Text = "Суммарная стоимость";
-                    paymentsTable.Rows[1].Range.Bold = 1;
-
-                    for (int i = 0; i < allTypes.Count; i++)
-                    {
-                        int count = 0;
-                        decimal sum = 0;
-                        foreach (Property p in userProperties)
-                        {
-                            if (p.TypeID == allTypes[i].ID)
-                            {
-                                count++;
-                                sum += p.Price;
-                            }
-                        }
-                        paymentsTable.Cell(i + 2, 1).Range.Text = allTypes[i].Name;
-                        paymentsTable.Cell(i + 2, 2).Range.Text = count.ToString();
-                        paymentsTable.Cell(i + 2, 3).Range.Text = sum.ToString("N2") + " руб.";
-                    }
-
-                    int lastRow = allTypes.Count + 2;
-                    paymentsTable.Cell(lastRow, 1).Range.Text = "Итого";
-                    paymentsTable.Cell(lastRow, 2).Range.Text = userProperties.Count.ToString();
-                    paymentsTable.Cell(lastRow, 3).Range.Text = totalSum.ToString("N2") + " руб.";
-                    paymentsTable.Rows[lastRow].Range.Bold = 1;
-
-                    if (userProperties.Count > 0)
-                    {
-                        Word.Paragraph maxParagraph = document.Paragraphs.Add();
-                        Word.Range maxRange = maxParagraph.Range;
-                        maxRange.Text = "Самый дорогой объект — " + maxProperty.Address + ": " +
-                                        maxProperty.Price.ToString("N2") + " руб.";
-                        maxRange.Font.Color = Word.WdColor.wdColorDarkRed;
-                        maxRange.InsertParagraphAfter();
-
-                        Word.Paragraph minParagraph = document.Paragraphs.Add();
-                        Word.Range minRange = minParagraph.Range;
-                        minRange.Text = "Самый дешёвый объект — " + minProperty.Address + ": " +
-                                        minProperty.Price.ToString("N2") + " руб.";
-                        minRange.Font.Color = Word.WdColor.wdColorDarkGreen;
-                        minRange.InsertParagraphAfter();
-                    }
-
-                    if (user != allUsers[allUsers.Count - 1])
-                        document.Words.Last.InsertBreak(Word.WdBreakType.wdPageBreak);
+                    table.Cell(i + 2, 1).Range.Text = properties[i].User.FIO;
+                    table.Cell(i + 2, 2).Range.Text = properties[i].PropertyType.Name;
+                    table.Cell(i + 2, 3).Range.Text = properties[i].Address;
+                    table.Cell(i + 2, 4).Range.Text = properties[i].Area.ToString();
+                    table.Cell(i + 2, 5).Range.Text = properties[i].Price.ToString("N0");
                 }
 
-                foreach (Word.Section section in document.Sections)
-                {
-                    Word.Range headerRange = section.Headers[Word.WdHeaderFooterIndex.wdHeaderFooterPrimary].Range;
-                    headerRange.Text = "AuroraApartments · отчёт от " + DateTime.Now.ToString("dd.MM.yyyy");
-                    headerRange.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
+                Word.Paragraph totalParagraph = document.Paragraphs.Add();
+                totalParagraph.Range.Text = "Всего объектов: " + properties.Count +
+                                            ". Общая стоимость: " + totalPrice.ToString("N0") + " руб.";
+                totalParagraph.Range.Font.Bold = 0;
 
-                    Word.HeaderFooter footer = section.Footers[Word.WdHeaderFooterIndex.wdHeaderFooterPrimary];
-                    footer.PageNumbers.Add(Word.WdPageNumberAlignment.wdAlignPageNumberCenter);
-                }
+                document.Content.Font.Name = "Times New Roman";
 
                 if (toPdf)
                 {
@@ -261,56 +220,38 @@ namespace UP01_Rusakov_RealEstate.Pages
 
         private void ButtonExcel_Click(object sender, RoutedEventArgs e)
         {
-            List<User> allUsers = GetUsersForExport();
+            List<Property> properties = GetPropertiesForExport();
 
             try
             {
                 var application = new Excel.Application();
-                application.SheetsInNewWorkbook = allUsers.Count;
+                application.SheetsInNewWorkbook = 1;
                 Excel.Workbook workbook = application.Workbooks.Add(Type.Missing);
+                Excel.Worksheet worksheet = (Excel.Worksheet)workbook.Worksheets[1];
+                worksheet.Name = "Объекты";
 
-                for (int i = 0; i < allUsers.Count; i++)
+                worksheet.Cells[1, 1] = "Агент";
+                worksheet.Cells[1, 2] = "Тип";
+                worksheet.Cells[1, 3] = "Адрес";
+                worksheet.Cells[1, 4] = "Площадь, м²";
+                worksheet.Cells[1, 5] = "Цена, руб.";
+                worksheet.Range["A1:E1"].Font.Bold = true;
+
+                int row = 2;
+                foreach (Property p in properties)
                 {
-                    User user = allUsers[i];
-                    List<Property> userProperties = new List<Property>(user.Properties);
-                    userProperties.Sort((a, b) => a.Date.CompareTo(b.Date));
-
-                    Excel.Worksheet worksheet = (Excel.Worksheet)workbook.Worksheets[i + 1];
-                    worksheet.Name = user.Login;
-
-                    worksheet.Cells[1, 1] = user.FIO;
-                    worksheet.Cells[2, 1] = "Дата";
-                    worksheet.Cells[2, 2] = "Тип";
-                    worksheet.Cells[2, 3] = "Адрес";
-                    worksheet.Cells[2, 4] = "Площадь, м²";
-                    worksheet.Cells[2, 5] = "Комнат";
-                    worksheet.Cells[2, 6] = "Цена, руб.";
-                    worksheet.Range["A1:F2"].Font.Bold = true;
-
-                    int row = 3;
-                    foreach (Property p in userProperties)
-                    {
-                        worksheet.Cells[row, 1] = p.Date.ToString("dd.MM.yyyy");
-                        worksheet.Cells[row, 2] = p.PropertyType.Name;
-                        worksheet.Cells[row, 3] = p.Address;
-                        worksheet.Cells[row, 4] = p.Area;
-                        worksheet.Cells[row, 5] = p.Rooms;
-                        worksheet.Cells[row, 6] = p.Price;
-                        row++;
-                    }
-
-                    if (userProperties.Count > 0)
-                    {
-                        worksheet.Cells[row, 3] = "Итого:";
-                        ((Excel.Range)worksheet.Cells[row, 4]).Formula = "=SUM(D3:D" + (row - 1) + ")";
-                        ((Excel.Range)worksheet.Cells[row, 6]).Formula = "=SUM(F3:F" + (row - 1) + ")";
-                        worksheet.Cells[row + 1, 3] = "Средняя цена:";
-                        ((Excel.Range)worksheet.Cells[row + 1, 6]).Formula = "=AVERAGE(F3:F" + (row - 1) + ")";
-                        worksheet.Range["A" + row + ":F" + (row + 1)].Font.Bold = true;
-                    }
-
-                    worksheet.Columns.AutoFit();
+                    worksheet.Cells[row, 1] = p.User.FIO;
+                    worksheet.Cells[row, 2] = p.PropertyType.Name;
+                    worksheet.Cells[row, 3] = p.Address;
+                    worksheet.Cells[row, 4] = p.Area;
+                    worksheet.Cells[row, 5] = p.Price;
+                    row++;
                 }
+
+                worksheet.Cells[row, 4] = "Итого:";
+                ((Excel.Range)worksheet.Cells[row, 5]).Formula = "=SUM(E2:E" + (row - 1) + ")";
+                worksheet.Range["A" + row + ":E" + row].Font.Bold = true;
+                worksheet.Columns.AutoFit();
 
                 string xlsxPath = GetFileName(".xlsx");
                 workbook.SaveAs(xlsxPath);

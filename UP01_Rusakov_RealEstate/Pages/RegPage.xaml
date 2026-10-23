@@ -37,7 +37,10 @@
         <TextBlock Text="Новая учётная запись создаётся с ролью «Пользователь»."
                    Foreground="{DynamicResource HintBrush}" Margin="5,10,5,0" />
 
-        <Button Content="Зарегистрироваться" IsDefault="True" Margin="5,15,5,5"
-                ToolTip="Создать учётную запись" Click="RegButton_Click" />
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
+            <Button Content="Зарегистрироваться" IsDefault="True"
+                    ToolTip="Создать учётную запись" Click="RegButton_Click" />
+            <Button Content="Назад" ToolTip="Вернуться к авторизации" Click="ButtonBack_Click" />
+        </StackPanel>
     </StackPanel>
 </Page>

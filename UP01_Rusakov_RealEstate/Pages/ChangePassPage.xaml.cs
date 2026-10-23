@@ -60,6 +60,11 @@ namespace UP01_Rusakov_RealEstate.Pages
             }
         }
 
+        private void ButtonBack_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.GoBack();
+        }
+
         private void TbLogin_TextChanged(object sender, TextChangedEventArgs e)
         {
             HintLogin.Visibility = TbLogin.Text.Length > 0 ? Visibility.Hidden : Visibility.Visible;

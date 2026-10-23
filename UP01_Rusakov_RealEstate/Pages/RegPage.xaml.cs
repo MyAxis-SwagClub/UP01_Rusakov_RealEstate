@@ -77,6 +77,11 @@ namespace UP01_Rusakov_RealEstate.Pages
             }
         }
 
+        private void ButtonBack_Click(object sender, RoutedEventArgs e)
+        {
+            NavigationService.GoBack();
+        }
+
         private void Login_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             e.Handled = !Regex.IsMatch(e.Text, @"^[a-zA-Z0-9._@-]+$");

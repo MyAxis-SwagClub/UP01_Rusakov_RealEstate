@@ -10,7 +10,7 @@
     <SolidColorBrush x:Key="TextBrush" Color="#193D57" />
     <SolidColorBrush x:Key="ButtonTextBrush" Color="#193D57" />
     <SolidColorBrush x:Key="HintBrush" Color="#9197A3" />
-    <SolidColorBrush x:Key="LineBrush" Color="#D5D9E0" />
+    <SolidColorBrush x:Key="LineBrush" Color="#EAEBED" />
 
     <Style x:Key="PageStyle" TargetType="Page">
         <Setter Property="Background" Value="{StaticResource BgBrush}" />
