@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <LangVersion>7.3</LangVersion>
+    <RootNamespace>UP01_Rusakov_RealEstate</RootNamespace>
+    <AssemblyName>UP01_Rusakov_RealEstate</AssemblyName>
+    <ApplicationIcon>res\icon.ico</ApplicationIcon>
+    <Product>AuroraApartments</Product>
+    <Authors>Русаков Артём Сергеевич</Authors>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EntityFramework" Version="6.4.4" />
+    <PackageReference Include="Microsoft.Office.Interop.Word" Version="15.0.4797.1004" />
+    <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1001" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="res\**\*.png" />
+    <Resource Include="res\**\*.ico" />
+    <Resource Include="res\**\*.ttf" />
+  </ItemGroup>
+
+</Project>

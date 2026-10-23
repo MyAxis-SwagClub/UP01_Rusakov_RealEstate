@@ -1,0 +1,47 @@
+<Page x:Class="UP01_Rusakov_RealEstate.Pages.DiagrammPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:charts="clr-namespace:System.Windows.Forms.DataVisualization.Charting;assembly=System.Windows.Forms.DataVisualization"
+      Title="Диаграммы и отчёты"
+      Style="{DynamicResource PageStyle}"
+      IsVisibleChanged="Page_IsVisibleChanged">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Style="{DynamicResource PanelBorder}">
+            <StackPanel HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="Агент:" VerticalAlignment="Center" Margin="5" />
+                    <ComboBox x:Name="CmbUser" Width="260" DisplayMemberPath="FIO"
+                              ToolTip="Сотрудник, по объектам которого строится диаграмма"
+                              SelectionChanged="UpdateChart" />
+                    <TextBlock Text="Тип диаграммы:" VerticalAlignment="Center" Margin="10,5,5,5" />
+                    <ComboBox x:Name="CmbDiagram" Width="220" ToolTip="Вид диаграммы"
+                              SelectionChanged="UpdateChart" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <TextBlock Text="Выгрузить:" VerticalAlignment="Center" Margin="5" />
+                    <ComboBox x:Name="CmbExportScope" Width="260" ToolTip="По всем сотрудникам или только по выбранному агенту">
+                        <ComboBoxItem Content="Всех сотрудников" />
+                        <ComboBoxItem Content="Только выбранного агента" />
+                    </ComboBox>
+                    <Button Content="Экспорт в Word" ToolTip="Сохранить отчёт .docx и открыть в Word" Click="ButtonWord_Click" />
+                    <Button Content="Экспорт в PDF" ToolTip="Сохранить отчёт .pdf и открыть его" Click="ButtonPdf_Click" />
+                    <Button Content="Экспорт в Excel" ToolTip="Сохранить объекты в .xlsx и открыть в Excel" Click="ButtonExcel_Click" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <WindowsFormsHost Grid.Row="1" Margin="10">
+            <charts:Chart x:Name="ChartProperties">
+                <charts:Chart.Legends>
+                    <charts:Legend />
+                </charts:Chart.Legends>
+            </charts:Chart>
+        </WindowsFormsHost>
+    </Grid>
+</Page>

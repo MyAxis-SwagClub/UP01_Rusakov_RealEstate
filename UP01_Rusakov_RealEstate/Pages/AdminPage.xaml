@@ -1,0 +1,31 @@
+<Page x:Class="UP01_Rusakov_RealEstate.Pages.AdminPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Панель администратора"
+      Style="{DynamicResource PageStyle}">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <DockPanel Grid.Column="0" Background="{DynamicResource SurfaceBrush}">
+            <Button DockPanel.Dock="Bottom" Content="Выйти из аккаунта" Style="{DynamicResource DangerButton}"
+                    Margin="5,5,5,15" ToolTip="Вернуться к авторизации" Click="ButtonLogout_Click" />
+
+            <StackPanel DockPanel.Dock="Top" Margin="0,15,0,0">
+                <TextBlock Text="Администратор" FontWeight="Bold" Margin="15,0" />
+                <TextBlock x:Name="AdminNameText" TextWrapping="Wrap" Margin="15,0,15,15" />
+
+                <Button Content="Каталог объектов" ToolTip="Просмотр объектов (как у пользователя)" Click="ButtonCatalog_Click" />
+                <Button Content="Пользователи" ToolTip="Таблица пользователей" Click="ButtonUsers_Click" />
+                <Button Content="Типы недвижимости" ToolTip="Справочник типов недвижимости" Click="ButtonTypes_Click" />
+                <Button Content="Объекты" ToolTip="Таблица объектов недвижимости" Click="ButtonProperties_Click" />
+                <Button Content="Диаграммы и отчёты" ToolTip="Диаграмма и экспорт в Word, PDF, Excel" Click="ButtonDiagram_Click" />
+            </StackPanel>
+        </DockPanel>
+
+        <Frame x:Name="ContentFrame" Grid.Column="1" NavigationUIVisibility="Hidden"
+               Navigated="ContentFrame_Navigated" />
+    </Grid>
+</Page>

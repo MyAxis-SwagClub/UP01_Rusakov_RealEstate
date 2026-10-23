@@ -1,0 +1,63 @@
+<Page x:Class="UP01_Rusakov_RealEstate.Pages.PropertyTabPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Объекты недвижимости"
+      Style="{DynamicResource PageStyle}"
+      IsVisibleChanged="Page_IsVisibleChanged">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Style="{DynamicResource PanelBorder}">
+            <StackPanel>
+                <WrapPanel HorizontalAlignment="Center">
+                    <Grid>
+                        <TextBox x:Name="SearchBox" Width="240" ToolTip="Введите часть адреса"
+                                 TextChanged="SearchBox_TextChanged" />
+                        <TextBlock x:Name="HintSearch" Text="Поиск по адресу" Style="{DynamicResource HintText}" />
+                    </Grid>
+                    <ComboBox x:Name="TypeFilter" Width="240" DisplayMemberPath="Name"
+                              ToolTip="Фильтр по типу недвижимости" SelectionChanged="Filter_Changed" />
+                    <ComboBox x:Name="AgentFilter" Width="240" DisplayMemberPath="FIO"
+                              ToolTip="Фильтр по агенту" SelectionChanged="Filter_Changed" />
+                    <ComboBox x:Name="SortBox" Width="240" ToolTip="Сортировка" SelectionChanged="Filter_Changed">
+                        <ComboBoxItem Content="Цена (Возрастание)" />
+                        <ComboBoxItem Content="Цена (Убывание)" />
+                        <ComboBoxItem Content="Площадь (Возрастание)" />
+                        <ComboBoxItem Content="Площадь (Убывание)" />
+                    </ComboBox>
+                </WrapPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Content="Добавить" ToolTip="Добавить новый объект" Click="ButtonAdd_Click" />
+                    <Button Content="Удалить" ToolTip="Удалить выделенные объекты" Click="ButtonDel_Click" />
+                    <Button Content="Сбросить фильтры" ToolTip="Вернуть фильтры по умолчанию" Click="ClearFilters_Click" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <DataGrid x:Name="DataGridProperty" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True"
+                  ToolTip="Для удаления выделите строки (Ctrl или Shift)">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Дата" Binding="{Binding Date, StringFormat=dd.MM.yyyy}" Width="100" />
+                <DataGridTextColumn Header="Тип" Binding="{Binding PropertyType.Name}" Width="150" />
+                <DataGridTextColumn Header="Адрес" Binding="{Binding Address}" Width="*" />
+                <DataGridTextColumn Header="Площадь, м²" Binding="{Binding Area}" Width="105" />
+                <DataGridTextColumn Header="Комнат" Binding="{Binding Rooms}" Width="75" />
+                <DataGridTextColumn Header="Цена, ₽" Binding="{Binding Price, StringFormat=N0}" Width="120" />
+                <DataGridTextColumn Header="Агент" Binding="{Binding User.FIO}" Width="170" />
+                <DataGridTemplateColumn Width="210">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Редактировать" Click="ButtonEdit_Click" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <TextBlock x:Name="CountText" Grid.Row="2" HorizontalAlignment="Center" Margin="0,0,0,10" />
+    </Grid>
+</Page>

@@ -1,0 +1,48 @@
+<Window x:Class="UP01_Rusakov_RealEstate.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="AuroraApartments"
+        Icon="/res/icon.ico"
+        Height="780" Width="1320"
+        MinHeight="650" MinWidth="1150"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource BgBrush}"
+        Loaded="Window_Loaded"
+        Closing="Window_Closing">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="60" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="45" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Background="{DynamicResource SurfaceBrush}">
+            <Button x:Name="ButtonBack" Content="← Назад" HorizontalAlignment="Left"
+                    ToolTip="Вернуться на предыдущую страницу" Click="ButtonBack_Click" />
+
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="AuroraApartments" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"
+                           Foreground="{DynamicResource SecondaryBrush}" />
+                <TextBlock x:Name="PageTitle" FontSize="14" HorizontalAlignment="Center"
+                           Foreground="{DynamicResource PrimaryBrush}" />
+            </StackPanel>
+
+            <Button x:Name="ButtonLogout" Content="Выйти из аккаунта" HorizontalAlignment="Right"
+                    ToolTip="Выйти из учётной записи" Click="ButtonLogout_Click" />
+        </Grid>
+
+        <Frame x:Name="MainFrame" Grid.Row="1" NavigationUIVisibility="Hidden" Navigated="MainFrame_Navigated" />
+
+        <Grid Grid.Row="2" Background="{DynamicResource SurfaceBrush}">
+            <TextBlock x:Name="CurrentUserText" Margin="15,0" VerticalAlignment="Center"
+                       Foreground="{DynamicResource TextBrush}" ToolTip="Пользователь, выполнивший вход" />
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,0">
+                <Button x:Name="ButtonTheme" Content="☾" Style="{DynamicResource SmallButton}"
+                        ToolTip="Сменить тему оформления" Click="ButtonTheme_Click" />
+                <TextBlock x:Name="DateTimeNow" Margin="10,0" VerticalAlignment="Center"
+                           Foreground="{DynamicResource TextBrush}" ToolTip="Текущие дата и время" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,59 @@
+<Page x:Class="UP01_Rusakov_RealEstate.Pages.UsersTabPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Пользователи"
+      Style="{DynamicResource PageStyle}"
+      IsVisibleChanged="Page_IsVisibleChanged">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Style="{DynamicResource PanelBorder}">
+            <StackPanel>
+                <WrapPanel HorizontalAlignment="Center">
+                    <Grid>
+                        <TextBox x:Name="SearchBox" Width="240" ToolTip="Введите часть ФИО или логина"
+                                 TextChanged="SearchBox_TextChanged" />
+                        <TextBlock x:Name="HintSearch" Text="Поиск по ФИО или логину" Style="{DynamicResource HintText}" />
+                    </Grid>
+                    <ComboBox x:Name="RoleFilter" Width="240" ToolTip="Фильтр по роли" SelectionChanged="Filter_Changed">
+                        <ComboBoxItem Content="Все роли" />
+                        <ComboBoxItem Content="Администраторы" />
+                        <ComboBoxItem Content="Пользователи" />
+                    </ComboBox>
+                    <ComboBox x:Name="SortBox" Width="240" ToolTip="Сортировка по ФИО" SelectionChanged="Filter_Changed">
+                        <ComboBoxItem Content="А-Я" />
+                        <ComboBoxItem Content="Я-А" />
+                    </ComboBox>
+                </WrapPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Content="Добавить" ToolTip="Добавить нового пользователя" Click="ButtonAdd_Click" />
+                    <Button Content="Удалить" ToolTip="Удалить выделенных пользователей" Click="ButtonDel_Click" />
+                    <Button Content="Сбросить фильтры" ToolTip="Вернуть фильтры по умолчанию" Click="ClearFilters_Click" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <DataGrid x:Name="DataGridUser" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True"
+                  ToolTip="Для удаления выделите строки (Ctrl или Shift)">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Логин" Binding="{Binding Login}" Width="120" />
+                <DataGridTextColumn Header="Пароль (хэш SHA-256)" Binding="{Binding Password}" Width="180" />
+                <DataGridTextColumn Header="Роль" Binding="{Binding Role}" Width="80" />
+                <DataGridTextColumn Header="ФИО" Binding="{Binding FIO}" Width="*" />
+                <DataGridTemplateColumn Width="210">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Редактировать" Click="ButtonEdit_Click" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <TextBlock x:Name="CountText" Grid.Row="2" HorizontalAlignment="Center" Margin="0,0,0,10" />
+    </Grid>
+</Page>

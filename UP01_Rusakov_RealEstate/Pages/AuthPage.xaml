@@ -1,0 +1,51 @@
+<Page x:Class="UP01_Rusakov_RealEstate.Pages.AuthPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Авторизация"
+      Style="{DynamicResource PageStyle}">
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <Image Source="/res/logo.png" Width="110" Height="110" />
+        <TextBlock Text="Вход в систему" Style="{DynamicResource HeaderText}" />
+
+        <StackPanel x:Name="LoginPanel">
+            <TextBlock Text="Логин" Margin="5,0" />
+            <Grid HorizontalAlignment="Center">
+                <TextBox x:Name="TextBoxLogin" MaxLength="50" ToolTip="Введите логин"
+                         TextChanged="TextBoxLogin_TextChanged" PreviewTextInput="Login_PreviewTextInput" />
+                <TextBlock x:Name="HintLogin" Text="Введите логин" Style="{DynamicResource HintText}" />
+            </Grid>
+
+            <TextBlock Text="Пароль" Margin="5,5,5,0" />
+            <Grid HorizontalAlignment="Center">
+                <PasswordBox x:Name="PasswordBox" MaxLength="50" ToolTip="Введите пароль"
+                             PasswordChanged="PasswordBox_PasswordChanged" />
+                <TextBlock x:Name="HintPassword" Text="Введите пароль" Style="{DynamicResource HintText}" />
+            </Grid>
+
+            <TextBlock x:Name="AttemptsText" Width="300" Margin="5" TextWrapping="Wrap"
+                       Foreground="{DynamicResource PrimaryBrush}" />
+
+            <Button x:Name="ButtonEnter" Content="Войти" IsDefault="True"
+                    ToolTip="Войти в систему" Click="ButtonEnter_Click" />
+            <Button x:Name="ButtonReg" Content="Регистрация"
+                    ToolTip="Создать новую учётную запись" Click="ButtonReg_Click" />
+            <Button x:Name="ButtonChangePassword" Content="Смена пароля"
+                    ToolTip="Изменить пароль от учётной записи" Click="ButtonChangePassword_Click" />
+        </StackPanel>
+
+        <StackPanel x:Name="CaptchaPanel" Visibility="Collapsed">
+            <TextBlock Text="Введите символы с картинки:" Margin="5" />
+            <TextBox x:Name="captcha" IsReadOnly="True" ContextMenu="{x:Null}"
+                     CommandManager.PreviewExecuted="Captcha_PreviewExecuted"
+                     Height="50" FontSize="26" FontStyle="Italic" FontWeight="Heavy" Foreground="Red"
+                     HorizontalContentAlignment="Center" ToolTip="Капча" />
+            <Grid HorizontalAlignment="Center">
+                <TextBox x:Name="captchaInput" MaxLength="10" ToolTip="Введите символы с картинки"
+                         TextChanged="CaptchaInput_TextChanged" />
+                <TextBlock x:Name="HintCaptcha" Text="Символы с картинки" Style="{DynamicResource HintText}" />
+            </Grid>
+            <Button x:Name="submitCaptcha" Content="Подтвердить" ToolTip="Проверить капчу" Click="SubmitCaptcha_Click" />
+            <Button Content="Другая капча" ToolTip="Сгенерировать новую капчу" Click="RefreshCaptcha_Click" />
+        </StackPanel>
+    </StackPanel>
+</Page>
